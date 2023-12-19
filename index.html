@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>웹 페이지 단어 빈도수 확인</title>
+</head>
+<body>
+  <h1>웹 페이지 단어 빈도수 확인하기</h1>
+  <input type="text" id="urlInput" placeholder="웹 페이지 링크를 입력하세요">
+  <button onclick="getWordFrequency()">확인</button>
+
+  <div id="wordFrequencyResults">
+    <!-- 단어 빈도수가 여기에 표시될 것입니다. -->
+  </div>
+
+  <script>
+    function getWordFrequency() {
+      const urlInput = document.getElementById('urlInput').value;
+      fetch(urlInput)
+        .then(response => response.text())
+        .then(data => {
+          const sanitizedText = data.replace(/<[^>]+>/g, ''); // HTML 태그 제거
+          const words = sanitizedText.split(/\s+/); // 공백을 기준으로 단어 분리
+  
+          const wordFrequency = {};
+          words.forEach(word => {
+            const trimmedWord = word.trim().toLowerCase(); // 단어 소문자로 변환
+            if (trimmedWord !== '') {
+              if (wordFrequency[trimmedWord]) {
+                wordFrequency[trimmedWord]++;
+              } else {
+                wordFrequency[trimmedWord] = 1;
+              }
+            }
+          });
+  
+          // 결과 표시
+          const wordFrequencyResults = document.getElementById('wordFrequencyResults');
+          wordFrequencyResults.innerHTML = '<h2>단어 빈도수</h2>';
+          for (const word in wordFrequency) {
+            const count = wordFrequency[word];
+            wordFrequencyResults.innerHTML += `<p>${word}: ${count}회</p>`;
+          }
+        })
+        .catch(error => {
+          console.error('오류 발생:', error);
+          alert('웹 페이지를 불러오는 데 문제가 발생했습니다.');
+        });
+    }
+  </script>
+  
+</body>
+</html>
